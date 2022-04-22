@@ -1,38 +1,36 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Linq;
-using System.Windows;
+﻿using AdonisUI;
+using AutoUpdaterDotNET;
 using BL3Tools;
 using BL3Tools.GameData;
-using AdonisUI;
+using BL3Tools.GameData.Items;
+using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Collections.Generic;
+using System.Windows.Input;
+using System.Windows.Navigation;
 using TTWSaveEditor.Helpers;
-using System.Collections.ObjectModel;
-using BL3Tools.GameData.Items;
 using MessageBox = AdonisUI.Controls.MessageBox;
-using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
 using MessageBoxButton = AdonisUI.Controls.MessageBoxButton;
 using MessageBoxImage = AdonisUI.Controls.MessageBoxImage;
-using System.Windows.Input;
-using System.IO.Compression;
-using System.IO;
-using AutoUpdaterDotNET;
-using System.Windows.Navigation;
-using System.Diagnostics;
-using System.Reflection;
+using MessageBoxResult = AdonisUI.Controls.MessageBoxResult;
 
 namespace TTWSaveEditor
 {
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
-
         #region Databinding Data
+
         public static string Version { get; private set; } = "0.1.1a";
 
         public static RoutedCommand DuplicateCommand { get; } = new RoutedCommand();
@@ -45,6 +43,7 @@ namespace TTWSaveEditor
         public bool showDebugMaps { get; set; } = false;
 
         private bool _ForceLegitParts = false;
+
         public bool ForceLegitParts
         {
             get { return _ForceLegitParts; }
@@ -141,6 +140,45 @@ namespace TTWSaveEditor
                 return vx;
             }
         }
+
+        public string[] ItemTypes = { "Normal", "Choatic", "Volatile", "Primordial", "Ascended" };
+
+        public ListCollectionView ValidItemTypes
+        {
+            get
+            {
+                if (SelectedSerial == null) return null;
+                var ItemLists = new List<string>();
+                ItemLists.AddRange(ItemTypes);
+
+                return new ListCollectionView(ItemLists);
+            }
+        }
+
+        public int GetItemTypeFromString(string value)
+        {
+            if (value == ItemTypes[0]) return 0;
+            if (value == ItemTypes[1]) return 1;
+            if (value == ItemTypes[2]) return 2;
+            if (value == ItemTypes[3]) return 3;
+            if (value == ItemTypes[4]) return 4;
+            return 0;
+        }
+
+        public string SelectedItemTypes
+        {
+            get
+            {
+                if (SelectedSerial == null) return null;
+                return ItemTypes[SelectedSerial.ItemType];
+            }
+            set
+            {
+                if (SelectedSerial == null) return;
+                SelectedSerial.ItemType = GetItemTypeFromString(value);
+            }
+        }
+
         public ListCollectionView ValidBalances
         {
             get
@@ -153,6 +191,7 @@ namespace TTWSaveEditor
                 return new ListCollectionView(balances);
             }
         }
+
         public string SelectedBalance
         {
             get
@@ -166,6 +205,7 @@ namespace TTWSaveEditor
                 SelectedSerial.Balance = InventorySerialDatabase.GetBalanceFromShortName(value);
             }
         }
+
         public ListCollectionView ValidManufacturers
         {
             get
@@ -173,6 +213,7 @@ namespace TTWSaveEditor
                 return new ListCollectionView(InventorySerialDatabase.GetManufacturers());
             }
         }
+
         public string SelectedManufacturer
         {
             get
@@ -190,7 +231,6 @@ namespace TTWSaveEditor
                 {
                     return Manufacturer;
                 }
-
             }
             set
             {
@@ -202,6 +242,7 @@ namespace TTWSaveEditor
                 SelectedSerial.Manufacturer = longNames[shortNames.IndexOf(value)];
             }
         }
+
         public ListCollectionView InventoryDatas
         {
             get
@@ -209,6 +250,7 @@ namespace TTWSaveEditor
                 return new ListCollectionView(InventorySerialDatabase.GetInventoryDatas());
             }
         }
+
         public string SelectedInventoryData
         {
             get
@@ -224,6 +266,7 @@ namespace TTWSaveEditor
                 SelectedSerial.InventoryData = longNames[shortNames.IndexOf(value)];
             }
         }
+
         public WonderlandsSerial SelectedSerial { get; set; }
 
         public ListCollectionView ValidParts
@@ -253,7 +296,6 @@ namespace TTWSaveEditor
 
                 // In this case, balances are what actually restrict the items from their anointments.
 
-
                 // Currently no generic parts actually have any excluders/dependencies
                 // but in the future they might so let's still enforce legit parts on them
                 if (!ForceLegitParts) validParts = InventorySerialDatabase.GetPartsForInvKey("InventoryGenericPartData");
@@ -269,9 +311,12 @@ namespace TTWSaveEditor
             }
         }
 
-        public int MaximumBankSDUs { get { return SDU.MaximumBankSDUs; } }
-        public int MaximumLostLootSDUs { get { return SDU.MaximumLostLoot; } }
-        #endregion
+        public int MaximumBankSDUs
+        { get { return SDU.MaximumBankSDUs; } }
+        public int MaximumLostLootSDUs
+        { get { return SDU.MaximumLostLoot; } }
+
+        #endregion Databinding Data
 
         private static string UpdateURL = "https://raw.githubusercontent.com/jokarwent/BL3SaveEditor/main/BL3SaveEditor/AutoUpdater.xml";
 
@@ -287,7 +332,6 @@ namespace TTWSaveEditor
         /// The current save game object; will be null if we loaded a profile instead of a save game
         /// </summary>
         public BL3Save saveGame { get; set; } = null;
-
 
         public MainWindow()
         {
@@ -314,6 +358,7 @@ namespace TTWSaveEditor
         }
 
         #region Toolbar Interaction
+
         private void NewSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("New save made...");
@@ -321,7 +366,6 @@ namespace TTWSaveEditor
 
         private void OpenSaveBtn_Click(object sender, RoutedEventArgs e)
         {
-
             Dictionary<Platform, string> PlatformFilters = new Dictionary<Platform, string>() {
                 { Platform.PC, "PC Tiny Tina's Wonderlands Save/Profile (*.sav)|*.sav" },
                 { Platform.PS4, "PS4 Tiny Tina's Wonderlands Save/Profile (*.sav)|*.sav" },
@@ -356,7 +400,6 @@ namespace TTWSaveEditor
                 bSaveLoaded = false;
                 // Profile tab
                 TabCntrl.SelectedIndex = 5;
-
             }
             else
             {
@@ -394,7 +437,6 @@ namespace TTWSaveEditor
                     bSaveLoaded = false;
                     // Profile tab
                     TabCntrl.SelectedIndex = 5;
-
                 }
                 else
                 {
@@ -497,7 +539,7 @@ namespace TTWSaveEditor
             dbgConsole.Show();
         }
 
-        #endregion
+        #endregion Toolbar Interaction
 
         private void AdonisWindow_Closed(object sender, EventArgs e)
         {
@@ -512,6 +554,7 @@ namespace TTWSaveEditor
         }
 
         #region Theme Toggling
+
         private void DarkModeBox_Checked(object sender, RoutedEventArgs e)
         {
             if (bLaunched)
@@ -522,14 +565,15 @@ namespace TTWSaveEditor
                 // Update the settings now
                 Properties.Settings.Default.bDarkModeEnabled = bChecked;
                 Properties.Settings.Default.Save();
-
             }
         }
-        #endregion
+
+        #endregion Theme Toggling
 
         #region Interactions
 
         #region General
+
         private void RandomizeGUIDBtn_Click(object sender, RoutedEventArgs e)
         {
             Guid newGUID = Guid.NewGuid();
@@ -572,9 +616,7 @@ namespace TTWSaveEditor
                     Console.WriteLine("Failed to adjust level of save: \"{0}\"\n{1}", ex.Message, ex.StackTrace);
                 }
             }
-
         }
-
 
         private void BackupAllSavesBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -627,17 +669,20 @@ namespace TTWSaveEditor
             }
         }
 
-        #endregion
+        #endregion General
 
         #region Character
+
         private void CharacterClass_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var str = e.AddedItems.OfType<string>().FirstOrDefault();
             if (str == null || str == default) return;
         }
-        #endregion
+
+        #endregion Character
 
         #region Fast Travel
+
         private void DbgMapBox_StateChange(object sender, RoutedEventArgs e)
         {
             VisitedTeleportersGrpBox.DataContext = null;
@@ -702,9 +747,10 @@ namespace TTWSaveEditor
             }
         }
 
-        #endregion
+        #endregion Fast Travel
 
         #region Backpack / Bank
+
         private void RefreshBackpackView()
         {
             // Need to change the data context real quick to make the GUI update
@@ -725,13 +771,14 @@ namespace TTWSaveEditor
             addPartBtn = ((Button)FindName("PartsAddBtn"));
             addPartBtn.DataContext = null;
             addPartBtn.DataContext = this;
-
         }
+
         private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (e.NewValue == null || e.OldValue == null) return;
             RefreshBackpackView();
         }
+
         private void BackpackListView_Selected(object sender, EventArgs e)
         {
             if (BackpackListView.Items.Count <= 1 || BackpackListView.SelectedValue == null) return;
@@ -744,6 +791,7 @@ namespace TTWSaveEditor
 
             RefreshBackpackView();
         }
+
         private void BackpackListView_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Handled) return;
@@ -757,6 +805,7 @@ namespace TTWSaveEditor
             // Make sure no other elements can handle the events
             e.Handled = true;
         }
+
         private void NewItemBtn_Click(object sender, RoutedEventArgs e)
         {
             Controls.ItemBalanceChanger changer = new Controls.ItemBalanceChanger() { Owner = this };
@@ -780,6 +829,7 @@ namespace TTWSaveEditor
                 RefreshBackpackView();
             }
         }
+
         private void PasteCodeBtn_Click(object sender, RoutedEventArgs e)
         {
             string serialCode = Clipboard.GetText();
@@ -814,6 +864,7 @@ namespace TTWSaveEditor
                 MessageBox.Show($"Error parsing serial: {ex.Message}", "Serial Parse Exception", AdonisUI.Controls.MessageBoxButton.OK, AdonisUI.Controls.MessageBoxImage.Error);
             }
         }
+
         private void SyncEquippedBtn_Click(object sender, RoutedEventArgs e)
         {
             if (saveGame == null) return;
@@ -827,6 +878,7 @@ namespace TTWSaveEditor
             }
             RefreshBackpackView();
         }
+
         private void SyncAllBtn_Click(object sender, RoutedEventArgs e)
         {
             int levelToSync = -1;
@@ -862,16 +914,19 @@ namespace TTWSaveEditor
             // Copy it to the clipboard
             Clipboard.SetDataObject(serialString);
         }
+
         private void PasteItem_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             PasteCodeBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
+
         private void DuplicateItem_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             // This basically just clicks both the copy and paste button
             CopyItem_Executed(null, e);
             PasteCodeBtn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
+
         private void DeleteBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             StringSerialPair svp = BackpackListView.SelectedValue as StringSerialPair;
@@ -884,7 +939,6 @@ namespace TTWSaveEditor
                 profile.BankItems.RemoveAt(idx);
             else
             {
-
                 // We need to preemptively adjust the equipped inventory lists so that way the equipped items stay consistent with the removed items.
                 //? Consider putting this into BL3Tools instead?
                 int eilIndex = saveGame.InventoryItems.FindIndex(x => ReferenceEquals(x, svp.Val2));
@@ -909,6 +963,24 @@ namespace TTWSaveEditor
             RefreshBackpackView();
         }
 
+        private void ChangeItemTypeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var itemKey = InventoryKeyDB.GetKeyForBalance(InventorySerialDatabase.GetBalanceFromShortName(SelectedBalance));
+            var itemType = InventoryKeyDB.ItemTypeToKey.Where(x => x.Value.Contains(itemKey)).Select(x => x.Key).FirstOrDefault();
+
+            Controls.ItemBalanceChanger changer = new Controls.ItemBalanceChanger(itemType, SelectedBalance) { Owner = this };
+
+            changer.ShowDialog();
+
+            // The user actually hit the save button and we have data about the item
+            if (changer.SelectedInventoryData != null)
+            {
+                SelectedInventoryData = changer.SelectedInventoryData;
+                SelectedBalance = changer.SelectedBalance;
+
+                RefreshBackpackView();
+            }
+        }
 
         private void ChangeTypeBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -928,13 +1000,13 @@ namespace TTWSaveEditor
                 RefreshBackpackView();
             }
         }
+
         private void AddItemPartBtn_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedSerial == null) return;
 
             var btn = (Button)sender;
             ListView obj = ((ListView)FindName(btn.Name.Replace("AddBtn", "") + "ListView"));
-
 
             string propertyName = obj.Name.Split(new string[] { "ListView" }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             if (propertyName == default) return;
@@ -953,6 +1025,7 @@ namespace TTWSaveEditor
             obj.GetBindingExpression(ListView.ItemsSourceProperty).UpdateTarget();
             RefreshBackpackView();
         }
+
         private void DeleteItemPartBtn_Click(object sender, RoutedEventArgs e)
         {
             var btn = (Button)sender;
@@ -1007,6 +1080,7 @@ namespace TTWSaveEditor
             if (parent == null) return;
             parent.SelectedValue = box.SelectedValue;
         }
+
         private string GetSelectedPart(string type, object sender, SelectionChangedEventArgs e)
         {
             if (e.Handled || e.RemovedItems.Count < 1) return null;
@@ -1028,6 +1102,7 @@ namespace TTWSaveEditor
 
             return fullName;
         }
+
         private void ItemPart_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView parent = ((ComboBox)sender).FindParent<ListView>();
@@ -1056,9 +1131,11 @@ namespace TTWSaveEditor
                 }
             }
         }
-        #endregion
+
+        #endregion Backpack / Bank
 
         #region Profile
+
         /// <summary>
         /// When modifying a profile (specifically guardian rank), the saves also store data about the guardian rank in case a profile gets corrupted.
         /// We need to modify *all* of these save's guardian ranks just to be safe.
@@ -1069,15 +1146,18 @@ namespace TTWSaveEditor
         {
             // Useless because there's no Guardian Rank in TTW.
         }
+
         private void InjectGRBtn_Click(object sender, RoutedEventArgs e)
         {
             // Useless because there's no Guardian Rank in TTW.
         }
+
         private void ClearLLBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profile == null) return;
             profile.LostLootItems.Clear();
         }
+
         private void ClearBankBtn_Click(object sender, RoutedEventArgs e)
         {
             if (profile == null) return;
@@ -1118,24 +1198,28 @@ namespace TTWSaveEditor
         {
             // Useless because there's no room decoration in TTW.
         }
+
         private void LockCustomizations_Click(object sender, RoutedEventArgs e)
         {
             profile.Profile.UnlockedCustomizations.Clear();
             profile.Profile.UnlockedInventoryCustomizationParts.Clear();
         }
-        #endregion
 
-        #endregion
+        #endregion Customization Unlockers/Lockers
+
+        #endregion Profile
 
         #region About
+
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
-        #endregion
 
-        #endregion
+        #endregion About
+
+        #endregion Interactions
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
         {

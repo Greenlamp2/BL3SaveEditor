@@ -1,16 +1,16 @@
 ﻿<adonisControls:AdonisWindow
     x:Class="TTWSaveEditor.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
     xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
     xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
     xmlns:bl3tools="clr-namespace:BL3Tools;assembly=BL3Tools"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="clr-namespace:TTWSaveEditor.Helpers"
     xmlns:local="clr-namespace:TTWSaveEditor"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:helpers="clr-namespace:TTWSaveEditor.Helpers"
     Title="Tiny Tina's Wonderlands Save Editor"
     Width="859"
     Height="628"
@@ -460,7 +460,7 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         IsEnabled="{Binding bSaveLoaded}"
-                                        Maximum="20"
+                                        Maximum="35"
                                         Minimum="0"
                                         ToolTip="The unlocked level of Mayhem of your character."
                                         Value="{Binding saveGame.Character.GameStateSaveDataForPlaythroughs[0].MayhemUnlockedLevel, Mode=TwoWay}" />
@@ -483,7 +483,7 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         IsEnabled="{Binding bSaveLoaded}"
-                                        Maximum="20"
+                                        Maximum="35"
                                         Minimum="0"
                                         ToolTip="The current enabled level of Mayhem of your character."
                                         Value="{Binding saveGame.Character.GameStateSaveDataForPlaythroughs[0].MayhemLevel, Mode=TwoWay}" />
@@ -1079,7 +1079,6 @@
                                 <KeyBinding Command="{x:Static local:MainWindow.DeleteCommand}" Gesture="Delete" />
                             </ListView.InputBindings>
 
-
                             <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Command="Copy">
@@ -1148,8 +1147,8 @@
                                 IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}">
                                 <Label
                                     Width="100"
-                                    Height="25"
-                                    Margin="10,10,0,0"
+                                    Height="27"
+                                    Margin="10,6,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     VerticalContentAlignment="Center"
@@ -1157,24 +1156,23 @@
                                     FontWeight="Normal" />
 
                                 <xctk:IntegerUpDown
-                                    Margin="115,10,10,0"
-                                    HorizontalAlignment="Stretch"
+                                    Margin="115,6,10,0"
                                     VerticalAlignment="Top"
                                     Maximum="{Binding Path=maximumXP}"
                                     Minimum="0"
-                                    Value="{Binding Path=SelectedSerial.Level}" />
+                                    Value="{Binding Path=SelectedSerial.Level}" Height="27" />
 
                                 <ComboBox
-                                    Margin="115,60,104,0"
+                                    Margin="115,74,104,0"
                                     VerticalAlignment="Top"
                                     IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}"
                                     ItemsSource="{Binding ValidBalances}"
-                                    SelectedValue="{Binding SelectedBalance, Mode=TwoWay}" />
+                                    SelectedValue="{Binding SelectedBalance, Mode=TwoWay}" Height="27" />
 
                                 <Label
                                     Width="100"
-                                    Height="24"
-                                    Margin="10,60,0,0"
+                                    Height="27"
+                                    Margin="10,74,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     VerticalContentAlignment="Center"
@@ -1183,8 +1181,8 @@
 
                                 <Label
                                     Width="100"
-                                    Height="24"
-                                    Margin="10,118,0,0"
+                                    Height="29"
+                                    Margin="10,140,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     VerticalContentAlignment="Center"
@@ -1192,17 +1190,16 @@
                                     FontWeight="Normal" />
 
                                 <ComboBox
-                                    Margin="115,118,10,0"
-                                    HorizontalAlignment="Stretch"
+                                    Margin="115,140,10,0"
                                     VerticalAlignment="Top"
                                     IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}"
                                     ItemsSource="{Binding ValidManufacturers}"
-                                    SelectedValue="{Binding SelectedManufacturer, Mode=TwoWay}" />
+                                    SelectedValue="{Binding SelectedManufacturer, Mode=TwoWay}" Height="27" />
 
                                 <Label
                                     Width="100"
-                                    Height="24"
-                                    Margin="10,89,0,0"
+                                    Height="28"
+                                    Margin="10,107,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     VerticalContentAlignment="Center"
@@ -1210,12 +1207,11 @@
                                     FontWeight="Normal" />
 
                                 <ComboBox
-                                    Margin="115,89,10,0"
-                                    HorizontalAlignment="Stretch"
+                                    Margin="115,107,10,0"
                                     VerticalAlignment="Top"
                                     IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}"
                                     ItemsSource="{Binding InventoryDatas}"
-                                    SelectedValue="{Binding SelectedInventoryData, Mode=TwoWay}">
+                                    SelectedValue="{Binding SelectedInventoryData, Mode=TwoWay}" Height="25">
                                     <ComboBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <VirtualizingStackPanel VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />
@@ -1226,28 +1222,26 @@
                                 <Button
                                     Name="ChangeTypeBtn"
                                     Width="89"
-                                    Margin="0,60,10,0"
+                                    Margin="0,73,10,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Click="ChangeTypeBtn_Click"
                                     Content="Edit Balance"
-                                    IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}" />
+                                    IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}" Height="27" />
 
                                 <CheckBox
                                     Name="ForceLegitPartsChkBox"
                                     Width="108"
-                                    Margin="10,147,0,0"
+                                    Margin="10,174,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     Content="Force Legit Parts"
                                     DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext}"
                                     IsChecked="{Binding Path=ForceLegitParts, Mode=TwoWay}"
-                                    IsEnabled="False" />
+                                    IsEnabled="False" Height="18" Visibility="Hidden" />
 
                                 <Grid
-                                    Margin="10,168,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
+                                    Margin="10,174,0,0"
                                     Background="Transparent">
                                     <Grid.Resources>
                                         <helpers:SerialPartConverter x:Key="MainPartConverter1" />
@@ -1261,7 +1255,6 @@
                                                     <Setter.Value>
                                                         <Style TargetType="{x:Type ListViewItem}">
                                                             <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth}" />
-                                                            <Setter Property="Margin" Value="-1,-1,0,0" />
                                                             <Setter Property="Background" Value="{DynamicResource {x:Static adonisUi:Brushes.Layer3BackgroundBrush}}" />
                                                         </Style>
                                                     </Setter.Value>
@@ -1278,6 +1271,10 @@
                                             <EventSetter Event="SelectionChanged" Handler="ItemPart_SelectionChanged" />
                                         </Style>
                                     </Grid.Resources>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="25*"/>
+                                        <RowDefinition Height="131*"/>
+                                    </Grid.RowDefinitions>
 
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
@@ -1288,7 +1285,6 @@
                                         Name="PartsLabel"
                                         Height="16"
                                         Margin="0,10,10,0"
-                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         HorizontalContentAlignment="Center"
                                         Content="{Binding Path=SelectedSerial.Parts.Count}"
@@ -1296,8 +1292,7 @@
 
                                     <Grid
                                         Margin="0,31,10,39"
-                                        VerticalAlignment="Stretch"
-                                        Background="{DynamicResource {x:Static adonisUi:Brushes.Layer2BackgroundBrush}}">
+                                        Background="{DynamicResource {x:Static adonisUi:Brushes.Layer2BackgroundBrush}}" Grid.RowSpan="2">
                                         <ListView
                                             Name="PartsListView"
                                             VerticalAlignment="Top"
@@ -1341,23 +1336,23 @@
                                         Grid.Column="0"
                                         Width="75"
                                         Height="24"
-                                        Margin="185,0,10,10"
+                                        Margin="0,0,10,10"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Click="DeleteItemPartBtn_Click"
                                         Content="Delete"
-                                        IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}" />
+                                        IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}" Grid.Row="1" />
 
                                     <Button
                                         Name="PartsAddBtn"
                                         Grid.Column="0"
                                         Width="68"
                                         Height="24"
-                                        Margin="0,0,202,10"
+                                        Margin="0,0,0,10"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Bottom"
                                         Click="AddItemPartBtn_Click"
-                                        Content="Add">
+                                        Content="Add" Grid.Row="1">
                                         <Button.IsEnabled>
                                             <MultiBinding Converter="{StaticResource AndConverter1}">
                                                 <Binding Path="SelectedSerial.InventoryKey" TargetNullValue="False" />
@@ -1372,9 +1367,7 @@
                                     <Grid
                                         Grid.Column="1"
                                         Margin="10,31,0,39"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        Background="{DynamicResource {x:Static adonisUi:Brushes.Layer2BackgroundBrush}}">
+                                        Background="{DynamicResource {x:Static adonisUi:Brushes.Layer2BackgroundBrush}}" Grid.RowSpan="2">
                                         <ListView
                                             Name="GenericPartsListView"
                                             VerticalAlignment="Top"
@@ -1419,23 +1412,23 @@
                                         Grid.Column="1"
                                         Width="75"
                                         Height="24"
-                                        Margin="195,0,0,10"
+                                        Margin="0,0,0,10"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Click="DeleteItemPartBtn_Click"
                                         Content="Delete"
-                                        IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}" />
+                                        IsEnabled="{Binding Path=SelectedSerial.InventoryKey, TargetNullValue=False}" Grid.Row="1" />
 
                                     <Button
                                         Name="GenericPartsAddBtn"
                                         Grid.Column="1"
                                         Width="68"
                                         Height="24"
-                                        Margin="10,0,192,10"
+                                        Margin="10,0,0,10"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Bottom"
                                         Click="AddItemPartBtn_Click"
-                                        Content="Add">
+                                        Content="Add" Grid.Row="1">
                                         <Button.IsEnabled>
                                             <MultiBinding Converter="{StaticResource AndConverter1}">
                                                 <Binding Path="SelectedSerial.InventoryKey" TargetNullValue="False" />
@@ -1456,12 +1449,26 @@
                                         Grid.Column="1"
                                         Height="16"
                                         Margin="10,10,0,0"
-                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
                                         HorizontalContentAlignment="Center"
                                         Content="{Binding Path=SelectedSerial.GenericParts.Count}"
                                         ContentStringFormat="Generic Parts ({0}/15)" />
                                 </Grid>
+                                <Label
+                                    Width="100"
+                                    Height="27"
+                                    Margin="10,40,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    VerticalContentAlignment="Center"
+                                    Content="Item Type: "
+                                    FontWeight="Normal" />
+                                <ComboBox
+                                    Margin="115,40,10,0"
+                                    VerticalAlignment="Top"
+                                    IsEnabled="{Binding SelectedSerial.InventoryKey, TargetNullValue=False}"
+                                    ItemsSource="{Binding ValidItemTypes}"
+                                    SelectedValue="{Binding SelectedItemTypes, Mode=TwoWay}" Height="26" />
                             </Grid>
                         </ScrollViewer>
                     </Grid>
@@ -1495,7 +1502,15 @@
                         IsReadOnly="False"
                         IsVirtualizing="True"
                         ShowTitle="False"
-                        Style="{StaticResource PropertyGridStyle}">
+                        Style="{StaticResource PropertyGridStyle}" RenderTransformOrigin="0.5,0.5" Margin="0,0,-1,0">
+                        <xctk:PropertyGrid.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform X="-2"/>
+                            </TransformGroup>
+                        </xctk:PropertyGrid.RenderTransform>
                         <xctk:PropertyGrid.SelectedObject>
                             <MultiBinding Converter="{StaticResource MultiElementObjectBinder1}">
                                 <Binding Path="saveGame.Character" />

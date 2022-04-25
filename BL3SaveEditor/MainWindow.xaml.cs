@@ -142,7 +142,7 @@ namespace TTWSaveEditor
             }
         }
 
-        public string[] ItemTypes = { "Normal", "Choatic", "Volatile", "Primordial", "Ascended" };
+        public string[] ItemTypes = { "Normal", "Chaotic", "Volatile", "Primordial", "Ascended" };
         public ListCollectionView ValidItemTypes
         {
             get
